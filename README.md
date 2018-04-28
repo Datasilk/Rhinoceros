@@ -31,6 +31,8 @@ The following methods are supported via JavaScript:
 Method|Arguments|Definition
 ---|---
 Rhino.Maximize||Maximize the browser window
+Rhino.Normalize||Bring window out of maximize or minimize state
+Rhino.ToggleMaximize||Returns true if window maximizes, false if window normalizes
 Rhino.Minimize||Minimize the browser window
 Rhino.Exit||Close the browser window (and application)
 Rhino.Toolbar|bool show|Show or hide built-in window toolbar
