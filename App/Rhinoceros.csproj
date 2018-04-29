@@ -36,16 +36,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Browser.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="Browser.cs" />
     <Compile Include="Browser.Designer.cs">
       <DependentUpon>Browser.cs</DependentUpon>
     </Compile>
-    <Compile Include="BrowserEvents.cs" />
+    <Compile Include="BrowserEvents.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="JsEvents.cs" />
     <Compile Include="Container.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="FileSystem.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Browser.resx">

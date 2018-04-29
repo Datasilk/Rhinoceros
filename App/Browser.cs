@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using CefSharp;
@@ -7,21 +8,73 @@ using CefSharp.WinForms;
 
 namespace Rhinoceros
 {
+    class AppOptions
+    {
+        public string url = "http://localhost:7000/";
+        public Color borderColor = Color.FromKnownColor(KnownColor.WindowFrame);
+        public int borderThickness = 4;
+        public ToolbarOptions toolbar = new ToolbarOptions();
+        public bool showDevTools = false;
+
+        public class ToolbarOptions{
+            
+            public Color backgroundColor = Color.FromKnownColor(KnownColor.WindowFrame);
+            public Color fontColor = Color.FromKnownColor(KnownColor.WindowText);
+            public Padding padding = new Padding(15, 10, 15, 10);
+            public int height = 25;
+            public FontStyle font = new FontStyle();
+        }
+    }
+
     public partial class Browser : Form
     {
-        public ChromiumWebBrowser browser;
-        public Container container;
+        //controls
+        private ChromiumWebBrowser browser;
+        private Container container;
         private Panel toolbar;
-        private BrowserEvents events;
+        private AppOptions options = new AppOptions();
 
+        //Javascript-bound class
+        private JsEvents events;
+
+        //cross-thread delegates
+        public delegate void Command();
+        public Command maximize;
+        public Command minimize;
+        public Command normalize;
+        public Command toggleMaximize;
+        public Command drag;
+        public Command exit;
+        public Command useToolbar;
+        public Command defaultTheme;
+
+        public delegate void CommandColor(int r, int g, int b);
+        public CommandColor borderColor;
+        public CommandColor toolbarColor;
+        public CommandColor toolbarFontColor;
+
+        public delegate void CommandInt(int num);
+        public CommandInt changeGripSize;
+
+        //properties
+        private Padding Grip { get { return new Padding(grip, 0, grip, grip); } }
+        private int _dblClickedToolbar = 0;
+        private bool _mouseDownToolbar = false;
+
+        //constructor
         public Browser()
         {
             InitializeComponent();
 
+            //set up browser options from config file
+            grip = options.borderThickness;
+
             //create container for chromium browser
             container = new Container
             {
-                Dock = DockStyle.Fill
+                Dock = DockStyle.Fill,
+                Padding = Grip,
+                BackColor = options.borderColor
             };
             Controls.Add(container);
 
@@ -29,39 +82,140 @@ namespace Rhinoceros
             toolbar = new Panel()
             {
                 Dock = DockStyle.Top,
-                BackColor = Color.PaleTurquoise,
-                Height = 4
+                BackColor = options.toolbar.backgroundColor,
+                ForeColor = options.toolbar.fontColor,
+                Font = new Font(Font, options.toolbar.font),
+                Padding = options.toolbar.padding,
+                Height = options.toolbar.height
             };
+            toolbar.DoubleClick += Toolbar_DoubleClick;
             toolbar.MouseDown += Toolbar_MouseDown;
+            toolbar.MouseMove += Toolbar_MouseMove;
+            toolbar.MouseUp += Toolbar_MouseUp;
             Controls.Add(toolbar);
-            
-            //create chromium web browser
-            var url = "http://markentingh.io";
+
+            //set up browser settings
             var paths = Application.LocalUserAppDataPath.Split('\\');
             var dataPath = string.Join("\\", paths.Take(paths.Length - 1)) + "\\";
             var settings = new CefSettings()
             {
-                CachePath = dataPath + "Profile\\"
+                CachePath = dataPath + "Profile\\",
+                LogSeverity = LogSeverity.Disable
             };
-            Cef.Initialize(settings);
-            browser = new ChromiumWebBrowser(url)
+
+            //delete cache (optional)
+            if(Directory.Exists(dataPath + "Profile\\Cache"))
             {
-                Dock = DockStyle.Fill,
-                Margin = new Padding(5)
+                FileSystem.DeleteDirectory(dataPath + "Profile\\Cache");
+            }
+
+            //add command line arguments when creating web browser
+            var cmdArgs = settings.CefCommandLineArgs;
+            cmdArgs.Add("disable-plugin-discovery", "1");
+            cmdArgs.Add("disable-direct-write", "1");
+
+            Cef.Initialize(settings);
+            browser = new ChromiumWebBrowser(options.url)
+            {
+                Dock = DockStyle.Fill
+            };
+
+            //set up browser internal events
+            browser.IsBrowserInitializedChanged += (object sender, IsBrowserInitializedChangedEventArgs e) => {
+                if(e.IsBrowserInitialized == true)
+                {
+                    //show DevTools
+                    if(options.showDevTools == true)
+                    {
+                        browser.ShowDevTools();
+                    }
+                }
             };
             container.Controls.Add(browser);
 
             //set up form window
-            events = new BrowserEvents(this);
+            events = new JsEvents();
             DoubleBuffered = true;
             SetStyle(ControlStyles.ResizeRedraw, true);
-            events.Normalize();
+
+            //bind delegates for cross-thread purposes
+            maximize = new Command(MaximizeWindow);
+            normalize = new Command(NormalizeWindow);
+            minimize = new Command(MinimizeWindow);
+            drag = new Command(DragWindow);
+            borderColor = new CommandColor(BorderColor);
+            toolbarColor = new CommandColor(ToolbarColor);
+            toolbarFontColor = new CommandColor(ToolbarFontColor);
+            changeGripSize = new CommandInt(ChangeGripSize);
+            exit = new Command(Exit);
+            defaultTheme = new Command(DefaultTheme);
+
+            //bind to JavaScript
+            browser.JavascriptObjectRepository.Register("Rhino", events, false);
+        }
+
+        //events
+        #region "Events"
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+            normalTop = Top;
+            normalLeft = Left;
+            normalWidth = Width;
+            normalHeight = Height;
+        }
+
+        protected override void OnMove(EventArgs e)
+        {
+            if (isMaximized == true && _dblClickedToolbar == 0)
+            {
+                isMaximized = false;
+                container.Padding = Grip;
+                Width = normalWidth;
+                Height = normalHeight;
+            }
+            else
+            {
+                _dblClickedToolbar -= 1;
+            }
         }
 
         private void Toolbar_MouseDown(object sender, MouseEventArgs e)
         {
-            events.DragWindow();
+            if(e.Clicks == 1)
+            {
+                _mouseDownToolbar = true;
+            }
         }
+
+        private void Toolbar_MouseMove(object sender, MouseEventArgs e)
+        {
+            if(_mouseDownToolbar == true)
+            {
+                Invoke(drag);
+            }
+        }
+
+        private void Toolbar_MouseUp(object sender, MouseEventArgs e)
+        {
+            _mouseDownToolbar = false;
+        }
+
+        private void Toolbar_DoubleClick(object sender, EventArgs e)
+        {
+            _dblClickedToolbar = 2;
+            _mouseDownToolbar = false;
+
+            if (isMaximized == false)
+            {
+                MaximizeWindow();
+            }
+            else
+            {
+                NormalizeWindow();
+            }
+        }
+        #endregion
 
         #region "borderless resizing"
 
@@ -74,16 +228,11 @@ namespace Rhinoceros
             HTBOTTOM = 15,
             HTBOTTOMLEFT = 16,
             HTBOTTOMRIGHT = 17;
-        private const int grip = 10;
 
         Rectangle ResizeTop { get { return new Rectangle(0, 0, ClientSize.Width, grip); } }
         Rectangle ResizeLeft { get { return new Rectangle(0, 0, grip, ClientSize.Height); } }
-
-        
-
         Rectangle ResizeBottom { get { return new Rectangle(0, ClientSize.Height - grip, ClientSize.Width, grip); } }
         Rectangle ResizeRight { get { return new Rectangle(ClientSize.Width - grip, 0, grip, ClientSize.Height); } }
-
         Rectangle ResizeTopLeft { get { return new Rectangle(0, 0, grip, grip); } }
         Rectangle ResizeTopRight { get { return new Rectangle(ClientSize.Width -grip, 0, grip, grip); } }
         Rectangle ResizeBottomLeft { get { return new Rectangle(0, ClientSize.Height - grip, grip, grip); } }
@@ -129,6 +278,8 @@ namespace Rhinoceros
                 {
                     m.Result = (IntPtr)HTBOTTOM;
                 }
+                normalWidth = Width;
+                normalHeight = Height;
             }
         }
 
