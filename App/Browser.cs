@@ -10,19 +10,22 @@ namespace Rhinoceros
 {
     class AppOptions
     {
+        //internal application options
         public string url = "http://localhost:7000/";
+        public string title = "Rhinoceros";
         public Color borderColor = Color.FromKnownColor(KnownColor.WindowFrame);
         public int borderThickness = 4;
-        public ToolbarOptions toolbar = new ToolbarOptions();
         public bool showDevTools = false;
+        public ToolbarOptions toolbar = new ToolbarOptions();
 
         public class ToolbarOptions{
             
             public Color backgroundColor = Color.FromKnownColor(KnownColor.WindowFrame);
             public Color fontColor = Color.FromKnownColor(KnownColor.WindowText);
-            public Padding padding = new Padding(15, 10, 15, 10);
-            public int height = 25;
-            public FontStyle font = new FontStyle();
+            public Padding padding = new Padding(4, 4, 15, 4);
+            public int height = 27;
+            public float fontSize = 12;
+            public string fontFamily = "Arial";
         }
     }
 
@@ -32,7 +35,7 @@ namespace Rhinoceros
         private ChromiumWebBrowser browser;
         private Container container;
         private Panel toolbar;
-        private AppOptions options = new AppOptions();
+        private Label title;
 
         //Javascript-bound class
         private JsEvents events;
@@ -56,7 +59,11 @@ namespace Rhinoceros
         public delegate void CommandInt(int num);
         public CommandInt changeGripSize;
 
+        public delegate void CommandStr(string str);
+        public CommandStr changeTitle;
+
         //properties
+        private AppOptions options = new AppOptions();
         private Padding Grip { get { return new Padding(grip, 0, grip, grip); } }
         private int _dblClickedToolbar = 0;
         private bool _mouseDownToolbar = false;
@@ -84,7 +91,6 @@ namespace Rhinoceros
                 Dock = DockStyle.Top,
                 BackColor = options.toolbar.backgroundColor,
                 ForeColor = options.toolbar.fontColor,
-                Font = new Font(Font, options.toolbar.font),
                 Padding = options.toolbar.padding,
                 Height = options.toolbar.height
             };
@@ -94,13 +100,21 @@ namespace Rhinoceros
             toolbar.MouseUp += Toolbar_MouseUp;
             Controls.Add(toolbar);
 
+            //create controls for toolbar
+            title = new Label();
+            title.Dock = DockStyle.Left;
+            title.Text = options.title;
+            title.Font = new Font(options.toolbar.fontFamily, options.toolbar.fontSize, FontStyle.Regular);
+            title.AutoSize = true;
+            toolbar.Controls.Add(title);
+
             //set up browser settings
             var paths = Application.LocalUserAppDataPath.Split('\\');
             var dataPath = string.Join("\\", paths.Take(paths.Length - 1)) + "\\";
             var settings = new CefSettings()
             {
                 CachePath = dataPath + "Profile\\",
-                LogSeverity = LogSeverity.Disable
+                LogSeverity = LogSeverity.Disable,
             };
 
             //delete cache (optional)
@@ -117,8 +131,10 @@ namespace Rhinoceros
             Cef.Initialize(settings);
             browser = new ChromiumWebBrowser(options.url)
             {
-                Dock = DockStyle.Fill
+                Dock = DockStyle.Fill,
+                BackColor = options.borderColor
             };
+            container.Controls.Add(browser);
 
             //set up browser internal events
             browser.IsBrowserInitializedChanged += (object sender, IsBrowserInitializedChangedEventArgs e) => {
@@ -131,7 +147,10 @@ namespace Rhinoceros
                     }
                 }
             };
-            container.Controls.Add(browser);
+            browser.TitleChanged += (object sender, TitleChangedEventArgs e) =>
+            {
+                Invoke(changeTitle, e.Title);
+            };
 
             //set up form window
             events = new JsEvents();
@@ -149,6 +168,7 @@ namespace Rhinoceros
             changeGripSize = new CommandInt(ChangeGripSize);
             exit = new Command(Exit);
             defaultTheme = new Command(DefaultTheme);
+            changeTitle = new CommandStr(ChangeTitle);
 
             //bind to JavaScript
             browser.JavascriptObjectRepository.Register("Rhino", events, false);

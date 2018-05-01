@@ -82,7 +82,7 @@ namespace Rhinoceros
 
         public void ToolbarFontColor(int r, int g, int b)
         {
-            toolbar.ForeColor = Color.FromArgb(r, g, b);
+            title.ForeColor = Color.FromArgb(r, g, b);
         }
 
         public void DefaultTheme()
@@ -90,7 +90,8 @@ namespace Rhinoceros
             container.BackColor = options.borderColor;
             toolbar.BackColor = options.toolbar.backgroundColor;
             toolbar.ForeColor = options.toolbar.fontColor;
-            toolbar.Font = new Font(Font, options.toolbar.font);
+            toolbar.Font = new Font(options.toolbar.fontFamily, options.toolbar.fontSize, FontStyle.Regular);
+            title.ForeColor = options.toolbar.fontColor;
         }
 
         public void ChangeGripSize(int size)
@@ -100,6 +101,11 @@ namespace Rhinoceros
             {
                 container.Padding = Grip;
             }
+        }
+
+        public void ChangeTitle(string str)
+        {
+            title.Text = str;
         }
 
         public void Exit()
