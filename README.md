@@ -17,12 +17,12 @@ You can execute certain methods within Rhinoceros via JavaScript in order to man
 
 ```
 <script type="text/javascript">
-    (async function() {
-        await CefSharp.BindObjectAsync("Rhino", "bound");
+	(async function() {
+		await CefSharp.BindObjectAsync("Rhino", "bound");
 
 		//add your code below (all C# methods must be lowercase)
 		Rhino.maximize();
-    })();
+	})();
 </script>
 ```
 
