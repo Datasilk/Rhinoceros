@@ -29,7 +29,7 @@ You can execute certain methods within Rhinoceros via JavaScript in order to man
 The following methods are supported via JavaScript:
 
 Method|Arguments|Definition
----|---
+---|---|---
 Rhino.maximize||Maximize the browser window
 Rhino.normalize||Bring window out of maximize or minimize state
 Rhino.minimize||Minimize the browser window
