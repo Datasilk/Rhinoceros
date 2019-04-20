@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using System.Drawing;
+using CefSharp;
 
 namespace Rhinoceros
 {
@@ -12,9 +13,11 @@ namespace Rhinoceros
         private int normalWidth = 0;
         private int normalHeight = 0;
         private bool isMaximized = false;
+        private bool isMaximizing = false;
 
         //dragging properties
         private int grip = 4;
+        private int gripCorner = 20;
         private const int WM_NCLBUTTONDOWN = 0xA1;
         private const int HT_CAPTION = 0x2;
 
@@ -25,18 +28,20 @@ namespace Rhinoceros
 
         public void MaximizeWindow()
         {
-            if (isMaximized == false)
+            if (isMaximized == false && isMaximizing == false)
             {
+                isMaximizing = true;
+                WindowState = FormWindowState.Normal;
                 normalTop = Top;
                 normalLeft = Left;
                 normalWidth = Width;
                 normalHeight = Height;
                 isMaximized = true;
-                WindowState = FormWindowState.Normal;
                 container.Padding = new Padding(0);
                 Left = Top = 0;
                 Width = Screen.FromControl(this).WorkingArea.Width;
                 Height = Screen.FromControl(this).WorkingArea.Height;
+                isMaximizing = false;
             }
         }
 
@@ -59,13 +64,10 @@ namespace Rhinoceros
             Left = normalLeft;
             Width = normalWidth;
             Height = normalHeight;
-            isMaximized = false;
         }
 
         public void DragWindow()
-        {
-            Width = normalWidth;
-            Height = normalHeight;
+        {   
             ReleaseCapture();
             SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
         }
@@ -111,6 +113,30 @@ namespace Rhinoceros
         public void Exit()
         {
             Application.Exit();
+        }
+
+        public class CustomMenuHandler : IContextMenuHandler
+        {
+            public void OnBeforeContextMenu(IWebBrowser browserControl, IBrowser browser, IFrame frame, IContextMenuParams parameters, IMenuModel model)
+            {
+                model.Clear();
+            }
+
+            public bool OnContextMenuCommand(IWebBrowser browserControl, IBrowser browser, IFrame frame, IContextMenuParams parameters, CefMenuCommand commandId, CefEventFlags eventFlags)
+            {
+
+                return false;
+            }
+
+            public void OnContextMenuDismissed(IWebBrowser browserControl, IBrowser browser, IFrame frame)
+            {
+
+            }
+
+            public bool RunContextMenu(IWebBrowser browserControl, IBrowser browser, IFrame frame, IContextMenuParams parameters, IMenuModel model, IRunContextMenuCallback callback)
+            {
+                return false;
+            }
         }
     }
 }

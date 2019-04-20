@@ -1,0 +1,14 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="none" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16">
+<defs>
+<path id="button-maximize" stroke="#FFFFFF" stroke-width="1" stroke-linejoin="miter" stroke-linecap="butt" stroke-miterlimit="3" fill="none" d="
+M 0.5 3.5
+L 3.5 3.5 3.5 0.5 14.35 0.5 14.35 11.35 11.35 11.35 11.35 14.35 0.5 14.35 0.5 3.5 Z
+M 3.5 3.5
+L 11.35 3.5 11.35 11.35 3.5 11.35 3.5 3.5 Z"/>
+</defs>
+
+<g transform="matrix( 1, 0, 0, 1, 0,0) ">
+<use xlink:href="#button-maximize"/>
+</g>
+</svg>
