@@ -58,6 +58,7 @@ namespace Rhinoceros
         public Command normalize;
         public Command toggleMaximize;
         public Command drag;
+        public Command newwindow;
         public Command exit;
         public Command useToolbar;
         public Command defaultTheme;
@@ -224,6 +225,7 @@ namespace Rhinoceros
             toolbarFontColor = new CommandColor(ToolbarFontColor);
             toolbarButtonColors = new CommandButtonColors(ToolbarButtonColors);
             changeGripSize = new CommandInt(ChangeGripSize);
+            newwindow = new Command(NewWindow);
             exit = new Command(Exit);
             defaultTheme = new Command(DefaultTheme);
             changeTitle = new CommandStr(ChangeTitle);

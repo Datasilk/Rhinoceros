@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using Svg;
@@ -30,7 +30,7 @@ namespace Rhinoceros
         {
             if(svg == null)
             {
-                svg = SvgDocument.Open(Directory.GetCurrentDirectory() + "\\Assets\\button-" + type.ToString() + ".svg");
+                svg = SvgDocument.Open(Environment.CurrentDirectory + "\\Assets\\button-" + type.ToString() + ".svg");
             }
             colorizeSvgNodes(svg.Descendants(), new SvgColourServer(color));
             BackgroundImage = svg.Draw();

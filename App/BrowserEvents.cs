@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Diagnostics;
@@ -117,6 +118,14 @@ namespace Rhinoceros
         public void ChangeTitle(string str)
         {
             title.Text = str;
+        }
+
+        public void NewWindow()
+        {
+            ProcessStartInfo start = new ProcessStartInfo();
+            start.FileName = Directory.GetCurrentDirectory() + "\\Rhinoceros.exe";
+            start.WindowStyle = ProcessWindowStyle.Normal;
+            Process proc = Process.Start(start);
         }
 
         public void Exit()

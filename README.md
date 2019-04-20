@@ -39,4 +39,5 @@ Rhino.toolbarcolor|r, g, b|Changes the background color of the window toolbar (i
 Rhino.toolbarfontcolor|r, g, b|Changes the font & icon colors of the window toolbar (if displayed)
 Rhino.toolbarbuttoncolors|bg, bghover, bgmousedown, icon, iconhover, iconmousedown|Changes the background & icon color of the toolbar buttons (minimize, maximize, & close buttons). Each button has a background & icon color for default, hover, & mouse down states. Each value must be an integer generated from an ARGB color, e.g. `return (a << 24) + (r << 16) + (g << 8) + (b)`
 Rhino.defaulttheme||Changes the theme styling back to default (border & toolbar colors)
+Rhino.newwindow||Opens a new Rhinoceros window
 Rhino.exit||Close the browser window (and application)

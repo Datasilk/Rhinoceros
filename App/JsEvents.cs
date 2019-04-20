@@ -79,6 +79,11 @@ namespace Rhinoceros
             Window.Invoke(Window.drag);
         }
 
+        public void newwindow()
+        {
+            Window.Invoke(Window.newwindow);
+        }
+
         public void exit()
         {
             Window.Invoke(Window.exit);
