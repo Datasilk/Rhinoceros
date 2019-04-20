@@ -34,8 +34,9 @@ Rhino.minimize||Minimize the browser window
 Rhino.drag||Drags the browser window (use on mouse down event only)
 Rhino.usetoolbar||Show built-in window toolbar
 Rhino.bordersize|size|Changes the thickness of the window border (in pixels)
-Rhino.bordercolor|r,g,b|Changes the color of the window border
-Rhino.toolbarcolor|r,g,b|Changes the background color of the window toolbar (if displayed)
-Rhino.toolbarfontcolor|r,g,b|Changes the font & icon colors of the window toolbar (if displayed)
+Rhino.bordercolor|r, g, b|Changes the color of the window border
+Rhino.toolbarcolor|r, g, b|Changes the background color of the window toolbar (if displayed)
+Rhino.toolbarfontcolor|r, g, b|Changes the font & icon colors of the window toolbar (if displayed)
+Rhino.toolbarbuttoncolors|bg, bghover, bgmousedown, icon, iconhover, iconmousedown|Changes the background & icon color of the toolbar buttons (minimize, maximize, & close buttons). Each button has a background & icon color for default, hover, & mouse down states. Each value must be an integer generated from an ARGB color, e.g. `return (a << 24) + (r << 16) + (g << 8) + (b)`
 Rhino.defaulttheme||Changes the theme styling back to default (border & toolbar colors)
 Rhino.exit||Close the browser window (and application)

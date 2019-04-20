@@ -16,10 +16,10 @@ namespace Rhinoceros
         {
             InitializeComponent();
             this.type = type;
-            UpdateButton(type, colors);
+            UpdateColors(colors);
         }
 
-        public void UpdateButton(ButtonType type, MenuButtonColorOptions colors)
+        public void UpdateColors(MenuButtonColorOptions colors)
         {
             BackColor = colors.backgroundColor;
             DrawIcon(type, colors.fontColor);

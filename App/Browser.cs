@@ -18,7 +18,7 @@ namespace Rhinoceros
         public int borderThickness = 5;
         public bool showDevTools = false;
         public ToolbarOptions toolbar = new ToolbarOptions();
-        public MenuButtonOptions menuButton = new MenuButtonOptions();
+        public MenuButtonOptions button = new MenuButtonOptions();
         public class ToolbarOptions
         {
 
@@ -66,6 +66,10 @@ namespace Rhinoceros
         public CommandColor borderColor;
         public CommandColor toolbarColor;
         public CommandColor toolbarFontColor;
+
+
+        public delegate void CommandButtonColors(MenuButtonColorOptions colors);
+        public CommandButtonColors toolbarButtonColors;
 
         public delegate void CommandInt(int num);
         public CommandInt changeGripSize;
@@ -124,31 +128,34 @@ namespace Rhinoceros
             toolbar.Controls.Add(title);
 
             //create maximize button
-            buttonMinimize = new MenuButton(ButtonType.minimize, options.menuButton);
-            buttonMinimize.Width = options.menuButton.width;
-            buttonMinimize.Height = options.menuButton.height;
+            buttonMinimize = new MenuButton(ButtonType.minimize, options.button);
+            buttonMinimize.Width = options.button.width;
+            buttonMinimize.Height = options.button.height;
             buttonMinimize.Dock = DockStyle.Right;
-            buttonMinimize.BackColor = options.toolbar.backgroundColor;
+            buttonMinimize.UpdateColors(options.button);
             buttonMinimize.Click += ButtonMinimize_Click;
             toolbar.Controls.Add(buttonMinimize);
 
             //create maximize button
-            buttonMaximize = new MenuButton(ButtonType.maximize, options.menuButton);
-            buttonMaximize.Width = options.menuButton.width;
-            buttonMaximize.Height = options.menuButton.height;
+            buttonMaximize = new MenuButton(ButtonType.maximize, options.button);
+            buttonMaximize.Width = options.button.width;
+            buttonMaximize.Height = options.button.height;
             buttonMaximize.Dock = DockStyle.Right;
-            buttonMaximize.BackColor = options.toolbar.backgroundColor;
+            buttonMaximize.UpdateColors(options.button);
             buttonMaximize.Click += ButtonMaximize_Click;
             toolbar.Controls.Add(buttonMaximize);
 
             //create close button
-            buttonClose = new MenuButton(ButtonType.close, options.menuButton);
-            buttonClose.Width = options.menuButton.width;
-            buttonClose.Height = options.menuButton.height;
+            buttonClose = new MenuButton(ButtonType.close, options.button);
+            buttonClose.Width = options.button.width;
+            buttonClose.Height = options.button.height;
             buttonClose.Dock = DockStyle.Right;
-            buttonClose.BackColor = options.toolbar.backgroundColor;
+            buttonClose.UpdateColors(options.button);
             buttonClose.Click += ButtonClose_Click;
             toolbar.Controls.Add(buttonClose);
+
+            //load default theme
+            DefaultTheme();
 
             //set up browser settings
             var paths = Application.LocalUserAppDataPath.Split('\\');
@@ -215,12 +222,13 @@ namespace Rhinoceros
             borderColor = new CommandColor(BorderColor);
             toolbarColor = new CommandColor(ToolbarColor);
             toolbarFontColor = new CommandColor(ToolbarFontColor);
+            toolbarButtonColors = new CommandButtonColors(ToolbarButtonColors);
             changeGripSize = new CommandInt(ChangeGripSize);
             exit = new Command(Exit);
             defaultTheme = new Command(DefaultTheme);
             changeTitle = new CommandStr(ChangeTitle);
 
-            //bind to JavaScript
+            //bind JsEvents instance to JavaScript
             browser.JavascriptObjectRepository.Register("Rhino", events, false);
         }
 
@@ -274,7 +282,6 @@ namespace Rhinoceros
                     {
                         Top = 0;
                         Left = cursor.X - (normalWidth / 2);
-                        Debug.WriteLine(cursor.X + ", " + normalWidth);
                     }
                 }
                 Invoke(drag);

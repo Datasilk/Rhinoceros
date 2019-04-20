@@ -31,7 +31,6 @@ namespace Rhinoceros
         {
             if (isMaximized == false && isMaximizing == false)
             {
-                Debug.WriteLine("update width via maximize");
                 isMaximizing = true;
                 WindowState = FormWindowState.Normal;
                 normalTop = Top;
@@ -89,13 +88,21 @@ namespace Rhinoceros
             title.ForeColor = Color.FromArgb(r, g, b);
         }
 
+        public void ToolbarButtonColors(MenuButtonColorOptions colors)
+        {
+            buttonClose.UpdateColors(colors);
+            buttonMaximize.UpdateColors(colors);
+            buttonMinimize.UpdateColors(colors);
+        }
+
         public void DefaultTheme()
         {
             container.BackColor = options.borderColor;
             toolbar.BackColor = options.toolbar.backgroundColor;
             toolbar.ForeColor = options.toolbar.fontColor;
-            toolbar.Font = new Font(options.toolbar.fontFamily, options.toolbar.fontSize, FontStyle.Regular);
+            title.Font = new Font(options.toolbar.fontFamily, options.toolbar.fontSize, FontStyle.Regular);
             title.ForeColor = options.toolbar.fontColor;
+            ToolbarButtonColors(options.button);
         }
 
         public void ChangeGripSize(int size)
