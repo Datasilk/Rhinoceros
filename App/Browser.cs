@@ -114,7 +114,7 @@ namespace Rhinoceros
             var settings = new CefSettings()
             {
                 CachePath = dataPath + "Profile\\",
-                LogSeverity = LogSeverity.Disable,
+                LogSeverity = LogSeverity.Disable
             };
 
             //delete cache (optional)
@@ -129,6 +129,7 @@ namespace Rhinoceros
             cmdArgs.Add("disable-direct-write", "1");
 
             Cef.Initialize(settings);
+            Cef.EnableHighDPISupport();
             browser = new ChromiumWebBrowser(options.url)
             {
                 Dock = DockStyle.Fill,
