@@ -78,6 +78,7 @@ namespace Rhinoceros
         private Padding Grip { get { return new Padding(grip, grip, grip, grip); } }
         private int _dblClickedToolbar = 0;
         private bool _mouseDownToolbar = false;
+        private bool _mouseMoveToolbar = false;
 
         //constructor
         public Browser()
@@ -254,16 +255,7 @@ namespace Rhinoceros
             if (e.Clicks == 1)
             {
                 _mouseDownToolbar = true;
-                var max = false;
-                if (isMaximized == true) { max = true; }
-                var cursor = PointToClient(Cursor.Position);
-                NormalizeWindow();
-                if (max == true)
-                {
-                    Top = 0;
-                    Left = cursor.X - (normalWidth / 2);
-                    Debug.WriteLine(cursor.X + ", " + normalWidth);
-                }
+                _mouseMoveToolbar = false;
             }
         }
 
@@ -271,6 +263,20 @@ namespace Rhinoceros
         {
             if (_mouseDownToolbar == true)
             {
+                if(_mouseMoveToolbar == false)
+                {
+                    _mouseMoveToolbar = true;
+                    var max = false;
+                    if (isMaximized == true) { max = true; }
+                    var cursor = PointToClient(Cursor.Position);
+                    NormalizeWindow();
+                    if (max == true)
+                    {
+                        Top = 0;
+                        Left = cursor.X - (normalWidth / 2);
+                        Debug.WriteLine(cursor.X + ", " + normalWidth);
+                    }
+                }
                 Invoke(drag);
             }
         }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using System.Drawing;
+using System.Diagnostics;
 using CefSharp;
 
 namespace Rhinoceros
@@ -30,6 +31,7 @@ namespace Rhinoceros
         {
             if (isMaximized == false && isMaximizing == false)
             {
+                Debug.WriteLine("update width via maximize");
                 isMaximizing = true;
                 WindowState = FormWindowState.Normal;
                 normalTop = Top;
