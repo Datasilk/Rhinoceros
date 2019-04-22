@@ -172,7 +172,7 @@ namespace Rhinoceros
             };
 
             //delete cache (optional)
-            if (Directory.Exists(dataPath + "Profile\\Cache"))
+            if (Utility.IsDebugMode == true && Directory.Exists(dataPath + "Profile\\Cache"))
             {
                 FileSystem.DeleteDirectory(dataPath + "Profile\\Cache");
             }

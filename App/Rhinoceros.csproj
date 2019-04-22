@@ -29,7 +29,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>6</ApplicationRevision>
+    <ApplicationRevision>15</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -61,8 +61,9 @@
   <PropertyGroup>
     <SignManifests>true</SignManifests>
   </PropertyGroup>
+  <PropertyGroup />
   <PropertyGroup>
-    <NoWin32Manifest>true</NoWin32Manifest>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Svg, Version=2.4.2.26702, Culture=neutral, PublicKeyToken=12a0bac221edeae2, processorArchitecture=MSIL">
@@ -162,7 +163,31 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="$(SolutionDir)packages\cef.redist.x64.73.1.12\CEF\**\*" Exclude="$(SolutionDir)packages\cef.redist.x64.73.1.12\CEF\x86\**\*;$(SolutionDir)packages\cef.redist.x64.73.1.12\CEF\locales\**\*.pak">
+    <Content Include="$(SolutionDir)packages\cef.redist.x86.73.1.12\CEF\**\*" Exclude="$(SolutionDir)packages\cef.redist.x86.73.1.12\CEF\x86\**\*;$(SolutionDir)packages\cef.redist.x86.73.1.12\CEF\locales\**\*.pak">
+      <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <Visible>false</Visible>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="$(SolutionDir)packages\cef.redist.x86.73.1.12\CEF\**\en-GB.*;$(SolutionDir)packages\cef.redist.x86.73.1.12\CEF\**\en-US.*">
+      <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <Visible>false</Visible>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="$(SolutionDir)packages\cef.redist.x86.73.1.12\CEF\x86\**\*">
+      <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <Visible>false</Visible>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="$(SolutionDir)packages\CefSharp.Common.73.1.120-pre01\CefSharp\x86\**\CefSharp.BrowserSubprocess.*">
+      <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <Visible>false</Visible>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="$(SolutionDir)packages\cef.redist.x64.73.1.12\CEF\**\*" Exclude="$(SolutionDir)packages\cef.redist.x64.73.1.12\CEF\x64\**\*;$(SolutionDir)packages\cef.redist.x64.73.1.12\CEF\locales\**\*.pak">
       <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
       <Visible>false</Visible>
     </Content>
@@ -174,13 +199,13 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="$(SolutionDir)packages\cef.redist.x64.73.1.12\CEF\x86\**\*">
+    <Content Include="$(SolutionDir)packages\cef.redist.x64.73.1.12\CEF\x64\**\*">
       <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
       <Visible>false</Visible>
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="$(SolutionDir)packages\CefSharp.Common.73.1.120-pre01\CefSharp\x86\**\CefSharp.BrowserSubprocess.*">
+    <Content Include="$(SolutionDir)packages\CefSharp.Common.73.1.120-pre01\CefSharp\x64\**\CefSharp.BrowserSubprocess.*">
       <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
       <Visible>false</Visible>
     </Content>
@@ -196,6 +221,26 @@
       <IncludeHash>True</IncludeHash>
       <FileType>Assembly</FileType>
     </PublishFile>
+    <PublishFile Include="CefSharp.BrowserSubprocess.Core.pdb">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="CefSharp.BrowserSubprocess.pdb">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
     <PublishFile Include="CefSharp.Core">
       <Visible>False</Visible>
       <Group>
@@ -205,26 +250,6 @@
       <PublishState>Include</PublishState>
       <IncludeHash>True</IncludeHash>
       <FileType>Assembly</FileType>
-    </PublishFile>
-    <PublishFile Include="CefSharp.Core.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="CefSharp.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
     </PublishFile>
     <PublishFile Include="CefSharp.WinForms">
       <Visible>False</Visible>
@@ -236,13 +261,13 @@
       <IncludeHash>True</IncludeHash>
       <FileType>Assembly</FileType>
     </PublishFile>
-    <PublishFile Include="CefSharp.WinForms.pdb">
+    <PublishFile Include="README.txt">
       <Visible>False</Visible>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
-      <PublishState>Include</PublishState>
+      <PublishState>Exclude</PublishState>
       <IncludeHash>True</IncludeHash>
       <FileType>File</FileType>
     </PublishFile>
